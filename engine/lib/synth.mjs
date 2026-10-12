@@ -202,3 +202,47 @@ export function writeWav(file, mix) {
   }
   fs.writeFileSync(file, buf);
 }
+
+// Read a 16-bit PCM WAV (mono or stereo) into a mix buffer, resampling to SR.
+export function readWav(file, seconds) {
+  const b = fs.readFileSync(file);
+  let p = 12, fmt = null, data = null;
+  while (p < b.length) {
+    const id = b.toString('ascii', p, p + 4), size = b.readUInt32LE(p + 4);
+    if (id === 'fmt ') fmt = { ch: b.readUInt16LE(p + 10), sr: b.readUInt32LE(p + 12), bits: b.readUInt16LE(p + 22) };
+    if (id === 'data') data = b.subarray(p + 8, p + 8 + size);
+    p += 8 + size + (size % 2);
+  }
+  if (!fmt || !data || fmt.bits !== 16) throw new Error(`unsupported wav: ${file}`);
+  const frames = data.length / (2 * fmt.ch);
+  const mix = createMix(seconds ?? frames / fmt.sr);
+  const ratio = fmt.sr / SR;
+  for (let i = 0; i < mix.n; i++) {
+    const src = i * ratio, j = Math.floor(src), f = src - j;
+    if (j + 1 >= frames) break;
+    for (let c = 0; c < 2; c++) {
+      const ch = Math.min(c, fmt.ch - 1);
+      const a = data.readInt16LE((j * fmt.ch + ch) * 2) / 32768;
+      const z = data.readInt16LE(((j + 1) * fmt.ch + ch) * 2) / 32768;
+      (c ? mix.R : mix.L)[i] = a + (z - a) * f;
+    }
+  }
+  return mix;
+}
+
+// Scale a bus by a gain curve g(t) sampled every 10 ms.
+export function automate(buf, g) {
+  const step = Math.floor(SR / 100);
+  for (let i = 0; i < buf.n; i += step) {
+    const a = g(i / SR), z = g((i + step) / SR);
+    for (let k = 0; k < step && i + k < buf.n; k++) {
+      const v = a + (z - a) * (k / step);
+      buf.L[i + k] *= v; buf.R[i + k] *= v;
+    }
+  }
+}
+
+export function gain(buf, v) {
+  for (let i = 0; i < buf.n; i++) { buf.L[i] *= v; buf.R[i] *= v; }
+  return buf;
+}

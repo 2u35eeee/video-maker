@@ -45,7 +45,8 @@ const mp4 = path.join(outDir, `${name}-${format}${suffix}.mp4`);
 const ff = ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(fps), '-i', '-'];
 if (wav) ff.push('-ss', String(from), '-t', String(to - from), '-i', wav);
 ff.push('-c:v', 'libx264', '-preset', 'medium', '-crf', '17', '-pix_fmt', 'yuv420p', '-r', String(fps));
-if (wav) ff.push('-c:a', 'aac', '-b:a', '192k', '-shortest');
+// loudness-normalise to -14 LUFS, the usual target for short-video platforms
+if (wav) ff.push('-af', 'loudnorm=I=-14:TP=-1.5:LRA=11', '-c:a', 'aac', '-b:a', '192k', '-shortest');
 ff.push('-movflags', '+faststart', mp4);
 const enc = spawn('ffmpeg', ff, { stdio: ['pipe', 'inherit', 'inherit'] });
 const encDone = new Promise((res, rej) => enc.on('exit', (c) => (c === 0 ? res() : rej(new Error('ffmpeg failed')))));

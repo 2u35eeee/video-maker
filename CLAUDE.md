@@ -10,6 +10,14 @@ the engine walks time, screenshots each frame and pipes it to ffmpeg. Target: Do
 - `timeline.js` — BPM, section times and event times. Imported by both the scene and the audio, so cuts and sound can't drift.
 - `audio.mjs` (optional) — `node audio.mjs out.wav`, built with `engine/lib/synth.mjs`.
 
+## Narrated videos (科普)
+
+- `script.json` holds the lines: `say` (spoken, write numbers in Chinese so TTS reads them right) and `sub` (on-screen, 【】 = highlighted keyword).
+- `uv run engine/tts.py projects/<name> [--voice eric] [--tempo 1.1]` → `out/<name>/vo.wav` + `projects/<name>/vo.js` (line timings; commit it). Lines are cached, so editing one line only regenerates that line.
+- `uv run engine/vo_check.py projects/<name>` transcribes each line with Whisper to catch misreadings. Dialect voices (eric, dylan) score low by nature; listen instead.
+- Scenes key every shot to `cue('<line id>').start`, never to hard-coded seconds, so re-voicing keeps picture in sync.
+- TTS: Qwen3-TTS 1.7B CustomVoice (local, MLX). Voices the user likes: serena, dylan (京腔), eric (四川话). Speed: put "语速偏快" in `instruct` plus `tempo` 1.1–1.2.
+
 ## Commands
 
 ```bash

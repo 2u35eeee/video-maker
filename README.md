@@ -31,6 +31,7 @@ node engine/render.mjs projects/001-showreel               # 出 MP4（含合成
 | 项目 | 内容 |
 |---|---|
 | `001-showreel` | 16 秒竖屏 showreel，120 BPM，8 个镜头全部代码绘制 + 代码合成配乐 |
+| `kp-001-birthday` | 科普：生日悖论，45 秒，四川话配音（Qwen3-TTS eric）+ 字幕 + 1 万次真实模拟 |
 
 ## 参考
 
