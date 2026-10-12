@@ -45,6 +45,17 @@ whoosh(fx, at('any') - 0.12, 0.3, 0.5);
 const pairsSpan = cue('pairs').end - at('pairs');
 for (let k = 0; k < 40; k++) blip(fx, at('pairs') + 0.1 + (k / 40) * pairsSpan, 600 + k * 22, 0.12, ((k % 7) - 3) * 0.15);
 impact(fx, at('chance'), 0.35);
+whoosh(fx, at('tiny') - 0.12, 0.3, 0.5);
+blip(fx, at('tiny') + 0.3, 1600, 0.7);
+// ticks as the pairs pile up, pitch falling with the bar
+{
+  const ts = at('stack'), oe = cue('odds').end;
+  for (let i = 0; i < 36; i++) {
+    const k = i / 35, tt = ts + 0.2 + (oe - ts - 0.4) * k;
+    blip(fx, tt, 1500 - 700 * k, 0.16, ((i % 5) - 2) * 0.15);
+  }
+  impact(fx, at('odds') + 0.9, 0.5);
+}
 whoosh(fx, at('sim') - 0.12, 0.3, 0.5);
 whoosh(fx, at('fifty') - 0.12, 0.3, 0.5);
 blip(fx, at('fifty') + 1.0, 1320, 0.6);

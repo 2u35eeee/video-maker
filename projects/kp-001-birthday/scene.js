@@ -36,6 +36,7 @@ const SECTIONS = [
   { id: 'answer', from: at('answer') - LEAD },
   { id: 'you', from: at('why') - LEAD },
   { id: 'pairs', from: at('any') - LEAD },
+  { id: 'odds', from: at('tiny') - LEAD },
   { id: 'sim', from: at('sim') - LEAD },
   { id: 'curve', from: at('fifty') - LEAD },
   { id: 'end', from: at('outro') - LEAD },
@@ -257,6 +258,85 @@ function pairsScene(t, lt) {
   header(t);
 }
 
+// ---------- 4b. why 253 pairs make ~50%: (364/365)^n shrinking ----------
+const NO = (n) => Math.pow(364 / 365, n);
+function oddsScene(t, lt) {
+  st.bg(C.ink);
+  const tt = at('tiny'), ts = at('stack'), to = at('odds'), oe = cue('odds').end;
+  // A: a year of 365 dots, one of them is "the same day"
+  const dotsOut = clamp(spring(t - ts + 0.1, 'default'));
+  if (dotsOut < 0.99) {
+    const cols = 19, gap = 36, x0 = DW / 2 - ((cols - 1) * gap) / 2, y0 = CY - 300;
+    for (let i = 0; i < 365; i++) {
+      const r = Math.floor(i / cols), c = i % cols;
+      const pin = spring(lt - i * 0.002, 'snappy') * (1 - dotsOut);
+      const hot = i === 200;
+      ctx.fillStyle = rgb(hot ? C.orange : C.paper, hot ? 1 : 0.32);
+      ctx.beginPath();
+      ctx.arc(x0 + c * gap, y0 + r * gap, (hot ? 14 : 9) * clamp(pin, 0, 1.2), 0, TAU);
+      ctx.fill();
+    }
+    const hot = [x0 + (200 % cols) * gap, y0 + Math.floor(200 / cols) * gap];
+    const ring = (t - tt) % 1;
+    if (t > tt) {
+      ctx.strokeStyle = rgb(C.orange, (1 - ring) * (1 - dotsOut));
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(hot[0], hot[1], 14 + ring * 40, 0, TAU); ctx.stroke();
+    }
+    const f = spring(t - tt - 0.3, 'playful') * (1 - dotsOut);
+    text('1/365', DW / 2, CY - 420, { size: 96, font: MONO, weight: 700, color: C.orange, alpha: clamp(f) });
+  }
+  // B: the "never collided" bar shrinks as pairs pile up
+  const barIn = clamp(spring(t - ts, 'default'));
+  if (barIn <= 0.01) { header(t); return; }
+  const k = clamp((t - ts - 0.2) / (oe - ts - 0.4));
+  const n = Math.max(1, Math.round(253 * Math.pow(k, 1.5)));
+  const p = NO(n);
+  const bx = 140, bw = 800, by = CY - 40, bh = 96;
+  ctx.globalAlpha = barIn;
+  // formula
+  ctx.font = `700 76px ${MONO}`;
+  const base = '(364/365)', bwid = ctx.measureText(base).width;
+  ctx.font = `700 46px ${MONO}`;
+  const ex = String(n), ewid = ctx.measureText('253').width;
+  const fx = DW / 2 - (bwid + ewid) / 2;
+  text(base, fx, CY - 240, { size: 76, font: MONO, weight: 700, color: C.paper, align: 'left' });
+  text(ex, fx + bwid + 6, CY - 282, { size: 46, font: MONO, weight: 700, color: C.orange, align: 'left' });
+  text('一直没撞的概率', DW / 2, CY - 340, { size: 36, color: C.paper, alpha: 0.6 });
+  // bar
+  roundRect(bx, by, bw, bh, 20);
+  ctx.fillStyle = rgb(C.orange);
+  ctx.fill();
+  ctx.save();
+  roundRect(bx, by, bw, bh, 20);
+  ctx.clip();
+  ctx.fillStyle = rgb(C.paper);
+  ctx.fillRect(bx, by, bw * p, bh);
+  ctx.restore();
+  text(`没撞 ${(p * 100).toFixed(1)}%`, bx + 20, by + bh + 50, { size: 40, font: MONO, weight: 700, color: C.paper, align: 'left' });
+  text(`撞了 ${((1 - p) * 100).toFixed(1)}%`, bx + bw - 20, by + bh + 50, { size: 40, font: MONO, weight: 700, color: C.orange, align: 'right' });
+  text(`第 ${n} 对`, DW / 2, CY - 150, { size: 40, color: C.paper, alpha: 0.75 });
+  // "只跟你比" marker at 22 pairs
+  if (n >= 22) {
+    const m = clamp(spring(t - ts - 0.2 - (oe - ts - 0.4) * Math.pow(22 / 253, 1 / 1.5), 'snappy'));
+    const mx = bx + bw * NO(22);
+    ctx.fillStyle = rgb(C.grey, m);
+    ctx.fillRect(mx - 2, by - 20, 4, bh + 40);
+    text('只跟你比：6%', mx, by + bh + 120, { size: 34, color: C.grey, alpha: m, align: 'right' });
+  }
+  // the punchline
+  const r = spring(t - to - 0.9, 'playful');
+  if (r > 0.01) {
+    ctx.save();
+    ctx.translate(DW / 2, CY + 330);
+    ctx.scale(clamp(r, 0, 1.2), clamp(r, 0, 1.2));
+    text('≈ 一半', 0, 0, { size: 110, weight: 700, color: C.orange });
+    ctx.restore();
+  }
+  ctx.globalAlpha = 1;
+  header(t);
+}
+
 // ---------- 5. ten thousand classes ----------
 const COLS = 20, ROWS = 20, CELLS = COLS * ROWS; // each cell = one simulated class
 function simScene(t, lt) {
@@ -367,7 +447,7 @@ function endScene(t, lt) {
   text('反直觉数学 · 01', DW / 2, 250, { size: 34, color: C.ink, alpha: 0.5, weight: 500, spacing: 4 });
 }
 
-const DRAW = { class: classScene, answer: answerScene, you: youScene, pairs: pairsScene, sim: simScene, curve: curveScene, end: endScene };
+const DRAW = { class: classScene, answer: answerScene, you: youScene, pairs: pairsScene, odds: oddsScene, sim: simScene, curve: curveScene, end: endScene };
 
 window.VIDEO = { duration: DURATION };
 window.SIM = { rate: simCum[SIMS] / SIMS, p23: P23 };
