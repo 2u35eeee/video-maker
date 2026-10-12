@@ -1,0 +1,26 @@
+{
+  "name": "video-maker",
+  "version": "1.0.0",
+  "description": "用 Claude Code + Opus 5.5 以代码生成短视频（主要面向抖音 9:16 竖屏）。",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "render": "node engine/render.mjs",
+    "stills": "node engine/stills.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/2u35eeee/video-maker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/2u35eeee/video-maker/issues"
+  },
+  "homepage": "https://github.com/2u35eeee/video-maker#readme",
+  "devDependencies": {
+    "playwright": "^1.64.0"
+  }
+}

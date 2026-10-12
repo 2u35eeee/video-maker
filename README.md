@@ -7,6 +7,14 @@
 模型不直接产出视频，而是写一个确定性的 `seek(t)` 程序：
 Playwright 逐帧截图 → ffmpeg 合成 MP4。改一行代码即可重新渲染。
 
+## 快速开始
+
+```bash
+npm install
+node engine/stills.mjs projects/001-showreel --every 0.5   # 出静帧 + 联系表，先审片
+node engine/render.mjs projects/001-showreel               # 出 MP4（含合成配乐）→ out/
+```
+
 ## 目录
 
 | 目录 | 用途 |
@@ -16,6 +24,12 @@ Playwright 逐帧截图 → ffmpeg 合成 MP4。改一行代码即可重新渲�
 | `refs/` | 参考帧 / 风格素材 |
 | `skills/` | 封装好的 Claude Code skills（如 `/motion-reel`） |
 | `out/` | 渲染输出（不入库） |
+
+## 作品
+
+| 项目 | 内容 |
+|---|---|
+| `001-showreel` | 16 秒竖屏 showreel，120 BPM，8 个镜头全部代码绘制 + 代码合成配乐 |
 
 ## 参考
 
