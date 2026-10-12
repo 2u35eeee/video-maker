@@ -24,6 +24,7 @@ the engine walks time, screenshots each frame and pipes it to ffmpeg. Target: Do
 node engine/stills.mjs projects/<name> --every 0.5      # stills + out/<name>/contact.png
 node engine/stills.mjs projects/<name> --at 3.2,6.1     # specific moments
 node engine/render.mjs projects/<name> [--fps 60] [--from 4 --to 8] [--no-audio]
+node engine/cover.mjs projects/<name>                   # cover.html → out/<name>/cover-3x4.png + cover-4x3.png
 ```
 
 ## Tooling
@@ -37,6 +38,7 @@ node engine/render.mjs projects/<name> [--fps 60] [--from 4 --to 8] [--no-audio]
 - **Springs, not easing curves**, from `engine/lib/motion.js`. Tiny overshoot on UI (`snappy`), none on big type (`heavy`). Any value with more than one target uses `track()`; never restart a spring.
 - **Cut on the beat.** Section boundaries and hits come from `timeline.js`.
 - **Douyin safe area.** Keep text and key subjects inside x 90–900, y 220–1560. The right edge (like/comment/share) and the bottom ~360 px (caption, music bar) are covered by app UI.
+- **Covers**: lead with the counter-intuitive claim and the number, not the jargon name. Lay out 3:4 and 4:3 separately (never crop one from the other); keep it to 3 big elements so it reads as a thumbnail.
 - **Hook in the first 2 seconds.** The first frame must already say something.
 - **Critique loop before every full render.** Render stills, look at them, list the 3 worst problems, fix, repeat. Render the MP4 only once the stills hold up.
 - **Never commit renders or keys.** `out/` and `.env` are git-ignored; API keys live in `.env` only.
