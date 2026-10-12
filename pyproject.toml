@@ -2,4 +2,6 @@
 name = "video-maker"
 version = "0.1.0"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "mlx-audio>=0.5.8",
+]
