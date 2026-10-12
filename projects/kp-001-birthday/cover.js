@@ -37,30 +37,30 @@ function ring(cx, cy, R, s) {
   text('你', pts[0][0], pts[0][1] - 88 * s, { size: 54 * s, color: C.orange, weight: 700 });
 }
 
-function tag(x, y, align) {
-  text('反直觉数学 01 · 生日悖论', x, y, { size: 34, color: C.paper, alpha: 0.6, weight: 500, spacing: 3, align });
+function tag(x, y, align, size = 34) {
+  text('反直觉数学 01 · 生日悖论', x, y, { size, color: C.paper, alpha: 0.6, weight: 500, spacing: 3, align });
 }
 
 function draw() {
   st.bg(C.ink);
   ctx.setTransform(1, 0, 0, 1, 0, 0); // covers draw in raw pixels
   if (portrait) {
-    tag(W / 2, 80, 'center');
-    text('23 个人里', W / 2, 210, { size: 130, color: C.paper, weight: 700 });
-    text('有人同一天生日？', W / 2, 360, { size: 92, color: C.paper, weight: 700 });
-    text('50.7%', W / 2, 600, { size: 250, font: MONO, color: C.orange, weight: 800 });
+    tag(W / 2, 64, 'center', 42);
+    text('23 个人里', W / 2, 180, { size: 130, color: C.paper, weight: 700 });
+    text('有人同一天生日的概率是？', W / 2, 315, { size: 76, color: C.paper, weight: 700 });
+    text('50.7%', W / 2, 515, { size: 250, font: MONO, color: C.orange, weight: 800 });
     ctx.save();
-    ctx.beginPath(); ctx.rect(0, 720, W, H - 720); ctx.clip();
-    ring(W / 2, 1210, 330, 1);
+    ctx.beginPath(); ctx.rect(0, 640, W, H - 640); ctx.clip();
+    ring(W / 2, 1090, 320, 1);
     ctx.restore();
   } else {
     const L = 90;
     tag(L, 110, 'left');
     text('23 个人里', L, 300, { size: 118, color: C.paper, weight: 700, align: 'left' });
-    text('有人同一天生日？', L, 440, { size: 84, color: C.paper, weight: 700, align: 'left' });
+    text('有人同一天生日的概率是？', L, 440, { size: 58, color: C.paper, weight: 700, align: 'left' });
     text('50.7%', L - 8, 670, { size: 210, font: MONO, color: C.orange, weight: 800, align: 'left' });
     text('比你想的高得多', L, 880, { size: 56, color: C.paper, alpha: 0.7, weight: 600, align: 'left' });
-    ring(1110, 590, 280, 0.9);
+    ring(1140, 590, 265, 0.86);
   }
   st.drawGrain(0, 0.06);
 }
