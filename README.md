@@ -10,7 +10,8 @@ Playwright 逐帧截图 → ffmpeg 合成 MP4。改一行代码即可重新渲�
 ## 快速开始
 
 ```bash
-npm install
+npm install      # 渲染引擎（Node / Playwright）
+uv sync          # Python 工具（TTS 等），统一用 uv 管理
 node engine/stills.mjs projects/001-showreel --every 0.5   # 出静帧 + 联系表，先审片
 node engine/render.mjs projects/001-showreel               # 出 MP4（含合成配乐）→ out/
 ```

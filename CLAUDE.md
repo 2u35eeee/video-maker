@@ -18,6 +18,11 @@ node engine/stills.mjs projects/<name> --at 3.2,6.1     # specific moments
 node engine/render.mjs projects/<name> [--fps 60] [--from 4 --to 8] [--no-audio]
 ```
 
+## Tooling
+
+- **Python: uv only.** `uv add <pkg>` to add deps, `uv run <script>` to run. Never `pip install` or use the system `python3` (it's 3.9). Python is pinned to 3.12 in `.python-version`; `pyproject.toml` + `uv.lock` are committed.
+- **Node: npm** for the render engine (Playwright). `npm install` after clone.
+
 ## Rules
 
 - **Deterministic.** No `Date.now()`, `requestAnimationFrame`, `Math.random()` or CSS animations. Everything is a function of `t`; use `rand(seed)` from `engine/lib/motion.js`.
